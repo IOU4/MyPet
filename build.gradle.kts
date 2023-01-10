@@ -14,6 +14,10 @@ repositories {
 
 tasks.bootRun {
     environment("SPRING_PROFILES_ACTIVE", "local")
+    file(".env").readLines().forEach {
+        val (key, value) = it.split("=")
+        environment(key, value)
+    }
 }
 
 dependencies {
