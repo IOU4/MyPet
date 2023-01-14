@@ -18,3 +18,16 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+  security:
+    cors:
+      origin: "*"
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://api.asgardeo.io/t/mypet/oauth2/token 
+          jwk-set-uri: https://api.asgardeo.io/t/mypet/oauth2/jwks
+    jwt:
+      publicKey: classpath:publicKey
+      privateKey: classpath:privateKey
+  devtools:
+    livereload.enabled: false
