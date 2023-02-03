@@ -1,23 +1,22 @@
 package ma.mypet.model;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AnimalDTO {
+public class AdoptionDTO {
 
   private Long id;
 
   @NotNull
-  @Size(max = 255)
-  private String type;
+  private Integer days;
 
-  @NotNull
-  private Integer age;
+  private String description;
 
-  private UserDTO owner;
+  private AnimalDTO animal;
+
+  private UserDTO adopter;
 
 }

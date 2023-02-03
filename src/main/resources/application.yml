@@ -18,9 +18,11 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+        enable_lazy_load_no_trans: true
+
+  cors:
+    allowed-origin: "*"
   security:
-    cors:
-      origin: "*"
     oauth2:
       resourceserver:
         jwt:
@@ -31,3 +33,4 @@ spring:
       privateKey: classpath:privateKey
   devtools:
     livereload.enabled: false
+    restart.enabled: true

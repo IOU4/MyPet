@@ -1,13 +1,19 @@
 package ma.mypet.repos;
 
 import ma.mypet.domain.User;
-import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean existsByEmailIgnoreCase(String email);
+  boolean existsByEmailIgnoreCase(String email);
 
-    boolean existsByPhoneIgnoreCase(String phone);
+  boolean existsByPhoneIgnoreCase(String phone);
+
+  Optional<User> findByName(String name);
+
+  Optional<User> findByEmail(String email);
 
 }

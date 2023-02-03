@@ -1,17 +1,23 @@
 package ma.mypet.service;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ma.mypet.model.UserDTO;
 
 @Service
 public class TokenService {
@@ -22,11 +28,13 @@ public class TokenService {
   @Autowired
   JwtEncoder jwtEncoder;
 
-  private static Logger logger = LoggerFactory.getLogger(TokenService.class);
+  @Autowired
+  UserService userService;
+
+  @Autowired
+  ObjectMapper objectMapper;
 
   public String generateToken(Authentication authentication) {
-
-    logger.info("in the token service");
     Instant now = Instant.now();
     long expiry = 36000L;
     String scope = authentication.getAuthorities().stream()
@@ -39,7 +47,24 @@ public class TokenService {
         .subject(authentication.getName())
         .claim("scope", scope)
         .build();
-    return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    var token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    try {
+      var json = new HashMap<String, Object>();
+      json.put("token", token);
+      json.put("user", getAuthenticatedUser());
+      var obj = objectMapper.writeValueAsString(json);
+      return token;
+    } catch (JsonProcessingException ex) {
+      return "error generating token";
+    }
+  }
+
+  private UserDTO getAuthenticatedUser() {
+    var principale = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (principale instanceof UserDetails) {
+      return userService.findByEmail(((UserDetails) principale).getUsername());
+    }
+    return userService.findByEmail(principale.toString());
   }
 
 }
