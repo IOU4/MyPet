@@ -1,9 +1,7 @@
 package ma.mypet.rest;
 
-import jakarta.validation.Valid;
 import java.util.List;
-import ma.mypet.model.UserDTO;
-import ma.mypet.service.UserService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +13,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+import ma.mypet.model.UserCreationDTO;
+import ma.mypet.model.UserDTO;
+import ma.mypet.service.UserService;
 
 @RestController
 @RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,7 +40,7 @@ public class UserResource {
   }
 
   @PostMapping
-  public ResponseEntity<Long> createUser(@RequestBody @Valid final UserDTO userDTO) {
+  public ResponseEntity<Long> createUser(@RequestBody @Valid final UserCreationDTO userDTO) {
     return new ResponseEntity<>(userService.create(userDTO), HttpStatus.CREATED);
   }
 

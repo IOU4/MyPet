@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ma.mypet.domain.User;
+import ma.mypet.model.UserCreationDTO;
 import ma.mypet.model.UserDTO;
 import ma.mypet.repos.UserRepository;
 import ma.mypet.util.NotFoundException;
@@ -21,6 +22,9 @@ public class UserService {
 
   @Autowired
   PasswordEncoder passwordEncoder;
+
+  @Autowired
+  UserCreationMapper userCreationMapper;
 
   public List<UserDTO> findAll() {
     final List<User> users = userRepository.findAll(Sort.by("id"));
@@ -35,10 +39,9 @@ public class UserService {
         .orElseThrow(() -> new NotFoundException());
   }
 
-  public Long create(final UserDTO userDTO) {
-    final User user = new User();
+  public Long create(final UserCreationDTO userDTO) {
     userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-    mapToEntity(userDTO, user);
+    final User user = userCreationMapper.apply(userDTO);
     return userRepository.save(user).getId();
   }
 
@@ -57,7 +60,6 @@ public class UserService {
     userDTO.setId(user.getId());
     userDTO.setName(user.getName());
     userDTO.setEmail(user.getEmail());
-    userDTO.setPassword(user.getPassword());
     userDTO.setAddress(user.getAddress());
     userDTO.setPhone(user.getPhone());
     return userDTO;
@@ -66,7 +68,6 @@ public class UserService {
   public User mapToEntity(final UserDTO userDTO, final User user) {
     user.setName(userDTO.getName());
     user.setEmail(userDTO.getEmail());
-    user.setPassword(userDTO.getPassword());
     user.setAddress(userDTO.getAddress());
     user.setPhone(userDTO.getPhone());
     return user;

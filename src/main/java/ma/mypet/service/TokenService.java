@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ma.mypet.model.UserDTO;
@@ -48,15 +47,10 @@ public class TokenService {
         .claim("scope", scope)
         .build();
     var token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-    try {
-      var json = new HashMap<String, Object>();
-      json.put("token", token);
-      json.put("user", getAuthenticatedUser());
-      var obj = objectMapper.writeValueAsString(json);
-      return token;
-    } catch (JsonProcessingException ex) {
-      return "error generating token";
-    }
+    var json = new HashMap<String, Object>();
+    json.put("token", token);
+    json.put("user", getAuthenticatedUser());
+    return token;
   }
 
   private UserDTO getAuthenticatedUser() {
